@@ -1,0 +1,28 @@
+
+- npm setup
+- rendering
+  - animations
+    - should work with their own tick
+    - entities need action queue
+    - action queueing stuff from Bees
+- basic UI
+  - button for ending turn
+- mouse stuff
+- turn reducers
+  - allowing players to control their entities on their turn
+  - how to control entities (one action per turn, energy, etc)
+- hex grid
+  - getters for neighboring positions (from selectors)
+
+- level editor
+  - add level editor functions to bee/cell
+  - how to turn editor function on entity into an entity that
+    gets made with the selected properties
+    - callback for args array that stays up to date?
+
+- AI
+  - position evaluation + shallow/greedy exploration
+
+- possible games
+  - bees vs wasps
+  - generals, armies, spies
