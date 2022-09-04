@@ -9,7 +9,7 @@ const initBoard = (width, height, isHexagonal) => {
   }
   // TODO: if hexagonal, may need to add an additional space to each even row
   for (let x = 0; x < width; x++) {
-    col = [];
+    const col = [];
     for (let y = 0; y < height; y++) {
       col.push({entityIDs: []});
     }
@@ -20,13 +20,14 @@ const initBoard = (width, height, isHexagonal) => {
 
 const getSpace = (board, x, y) => {
   const {width, height} = board;
-  if (x > width || y > height || x < 0 || y < 0) return {entityIDs: []};
+  if (x >= width || y >= height || x < 0 || y < 0) return {entityIDs: []};
 
   return board.grid[x][y];
 }
 
 const addToSpace = (board, x, y, entityID) => {
-  if (x > width || y > height || x < 0 || y < 0) return;
+  const {width, height} = board;
+  if (x >= width || y >= height || x < 0 || y < 0) return;
   board.grid[x][y]
 }
 
@@ -39,7 +40,6 @@ const getCanvasPosition = (board, x, y) => {
   if (y % 2 == 0) return {x: x + 0.5, y};
   return {x, y};
 }
-
 
 const getBoardCopy = (board) => {
   const copy = initBoard(board.width, board.height, board.isHexagonal);

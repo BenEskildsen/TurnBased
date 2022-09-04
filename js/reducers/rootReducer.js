@@ -7,9 +7,11 @@ const {
   initBoard,
 } = require('../state');
 // const {gameReducer} = require('./gameReducer');
-// const {mouseReducer} = require('./mouseReducer');
+const {mouseReducer} = require('./mouseReducer');
+const {addEntity} = require('../simulation/entityOperations');
 const {modalReducer} = require('./modalReducer');
 const {render} = require('../render');
+const {Entities} = require('../entities/registry');
 
 import type {State, Action} from '../types';
 
@@ -18,7 +20,7 @@ const rootReducer = (state: State, action: Action): State => {
 
   switch (action.type) {
     case 'START': {
-      return {
+      const nextState = {
         ...state,
         game: initGame(
           [initPlayer(0, 'HUMAN', 'You'), initPlayer(1, 'COMPUTER', 'Enemy')],
@@ -26,14 +28,34 @@ const rootReducer = (state: State, action: Action): State => {
         ),
         screen: 'GAME',
       }
+      render(nextState.game);
+      return nextState;
     }
+    case 'SET_SPRITE_SHEET':
+      state.sprites[action.name] = action.img;
     case 'SET':
     case 'CREATE_ENTITY':
     case 'QUEUE_ACTION':
     case 'STEP_ANIMATION':
     case 'END_TURN': {
       if (!state.game) return state;
-      return gameReducer(state.game, action);
+      const nextGame = gameReducer(state.game, action);
+      render(nextGame);
+      return {
+        ...state,
+        game: nextGame,
+      };
+    }
+    case 'SET_MOUSE_POS':
+    case 'SET_MOUSE_DOWN': {
+      if (!state.game) return state;
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          mouse: mouseReducer(state.game.mouse, action),
+        }
+      }
     }
     case 'SET_MODAL':
     case 'DISMISS_MODAL':
@@ -41,6 +63,7 @@ const rootReducer = (state: State, action: Action): State => {
 
   }
 
+  return state;
 };
 
 const gameReducer = (game, action) => {
@@ -52,6 +75,7 @@ const gameReducer = (game, action) => {
       game.turn = (game.turn + 1) % game.players.length;
 
       // things that happen on turn start:
+      return game;
     }
     case 'SET': {
       const {property, value} = action;
@@ -60,16 +84,40 @@ const gameReducer = (game, action) => {
         [property]: value,
       };
     }
+    case 'CREATE_ENTITY': {
+      const {entityType, args} = action;
+      const {make} = Entities[entityType];
+      const entity = make(...args);
+      addEntity(game, entity);
+      return game;
+    }
+    case 'SET_SPRITE_SHEET': {
+      const {name, img} = action;
+      game.sprites[name] = img;
+      return game;
+    }
+    case 'QUEUE_ACTION': {
+      const {entityID} =  action;
+      let nextGame = game;
+      const entity = game.entities[entityID];
+
+      const startCurrent = entity.actions.length == 0;
+      entity.actions.push(action.action);
+      if (startCurrent) {
+        nextGame = doNextAction(game, entity);
+      }
+      return nextGame;
+    }
     case 'STEP_ANIMATION': {
       let nextGame = game;
       const curTime = new Date().getTime();
       for (const entityID in nextGame.entities) {
         const entity = nextGame.entities[entityID];
-        if (entity.actionQueue.length == 0) continue;
-        const curAnimation = entity.actionQueue[0].animation;
+        if (entity.actions.length == 0) continue;
+        const curAnimation = entity.actions[0].animation;
         if (curAnimation.tick <= 0) {
-          entity.actionQueue.shift();
-          if (entity.actionQueue.length > 0) {
+          entity.actions.shift();
+          if (entity.actions.length > 0) {
             nextGame = doNextAction(nextGame, entity);
           }
           continue;
@@ -81,7 +129,7 @@ const gameReducer = (game, action) => {
       let stopAnimating = true;
       for (const entityID in nextGame.entities) {
         const entity = nextGame.entities[entityID];
-        if (entity.actionQueue.length > 0) {
+        if (entity.actions.length > 0) {
           stopAnimating = false;
           break;
         }

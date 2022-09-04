@@ -7,6 +7,8 @@ const initState = () => {
   return {
     game: null,
     screen: 'LOBBY',
+    sprites: {},
+    modal: null,
   };
 }
 
@@ -16,15 +18,28 @@ const initGame = (players, width, height) => {
     turn: 0,
     turnNum: 0,
 
-    viewWidth: 25,
-    viewHeight: 25,
+    viewWidth: width,
+    viewHeight: height,
+    gridWidth: width,
+    gridHeight: height,
     viewPos: {x: 0, y: 0},
 
     prevTickTime: new Date().getTime(),
+    sprites: {},
 
     nextID: 1,
     entities: {},
     board: initBoard(width, height, true /* is hexagonal */),
+
+    mouse: {
+      isLeftDown: false,
+      isRightDown: false,
+      downPos: {x: 0, y: 0},
+      prevPos: {x: 0, y: 0},
+      curPos: {x: 0, y: 0},
+      curPixel: {x: 0, y: 0},
+      prevPixel: {x: 0, y: 0},
+    },
   };
 
   for (const property in Properties) {

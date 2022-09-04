@@ -5,7 +5,10 @@ const {
   onScreen,
   getInterpolatedPosition,
   getInterpolatedTheta,
-} = require('./selectors');
+} = require('./selectors/misc');
+const {
+  getCanvasPosition,
+} = require('./board');
 
 let cur = null;
 let prevTime = 0;
@@ -101,7 +104,13 @@ const renderEntity = (ctx, game, entity) => {
     return;
   }
 
+  // translate to hex grid
+  ctx.save();
+  const canvasPos = getCanvasPosition(game.board, entity.position.x, entity.position.y);
+  ctx.translate(canvasPos.x - entity.position.x, 0);
+
   Entities[entity.type].render(ctx, game, entity);
+  ctx.restore();
 };
 
 

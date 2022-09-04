@@ -7,36 +7,44 @@ const {encodePosition} = require('bens_utils').helpers;
 
 const getPositionInFront = (game, entity) => {
   const dir = thetaToDir(entity.theta);
-  return add(entity.position, getPositionInDir(dir));
+  return add(entity.position, getPositionInDir(entity.position, dir));
 };
 
-const getPositionInDir = (dir) => {
-  switch (dir) {
-    case 'left':
-      return {x: -1, y: 0};
-    case 'upleft':
-      return {x: -0.5, y: -1};
-    case 'upright':
-      return {x: 0.5, y: -1};
-    case 'right':
-      return {x: 1, y: 0};
-    case 'downright':
-      return {x: 0.5, y: 1};
-    case 'downleft':
-      return {x: -0.5, y: 1};
+// For hex-grid you have 6 neighbors. even rows will have above and above-right
+// odd rows will have above and above-left
+const getPositionInDir = (pos, dir) => {
+  if (pos.y % 2 == 0) {
+    switch (dir) {
+      case 'left':
+        return {x: -1, y: 0};
+      case 'upleft':
+        return {x: 0, y: -1};
+      case 'upright':
+        return {x: 1, y: -1};
+      case 'right':
+        return {x: 1, y: 0};
+      case 'downright':
+        return {x: 1, y: 1};
+      case 'downleft':
+        return {x: 0, y: 1};
+    }
+  } else {
+    switch (dir) {
+      case 'left':
+        return {x: -1, y: 0};
+      case 'upleft':
+        return {x: -1, y: -1};
+      case 'upright':
+        return {x: 0, y: -1};
+      case 'right':
+        return {x: 1, y: 0};
+      case 'downright':
+        return {x: 0, y: 1};
+      case 'downleft':
+        return {x: -1, y: 1};
+    }
   }
 }
-
-const getNeighboringPositions = (game, entity) => {
-  return [
-    add(entity.position, {x: -1, y: 0}),
-    add(entity.position, {x: -0.5, y: -1}),
-    add(entity.position, {x: 0.5, y: -1}),
-    add(entity.position, {x: 1, y: 0}),
-    add(entity.position, {x: 0.5, y: 1}),
-    add(entity.position, {x: -0.5, y: 1}),
-  ];
-};
 
 
 const getCellInFront = (game, entity) => {
@@ -65,7 +73,7 @@ const getNextPositionInPath = (currentPos, targetPos) => {
   const diff = subtract(currentPos, targetPos);
   const theta = vectorTheta(diff);
   const dir = thetaToDir(theta);
-  return add(currentPos, getPositionInDir(dir));
+  return add(currentPos, getPositionInDir(currentPos, dir));
 };
 
 
@@ -80,7 +88,7 @@ const onScreen = (game, entity) => {
     y <= viewHeight + viewPos.y + 1;
 
   const inWorld =
-    x >= 0 && x < gridWidth &&
+    x >= -1 && x < gridWidth && // HACK to render background offset hexagonally
     y >= 0 && y < gridHeight;
 
   return onScreen && inWorld;
@@ -155,12 +163,15 @@ const getInterpolatedTheta = (entity: Entity) => {
   return theta;
 };
 
+const canvasToGrid = (game, pixel) => {
+
+}
+
 const exports = {
   getPositionInFront,
   getCellInFront,
   getEmptyCells,
   getNextPositionInPath,
-  getNeighboringPositions,
   onScreen,
   isFacing,
   thetaToDir,

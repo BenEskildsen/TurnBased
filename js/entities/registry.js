@@ -1,6 +1,5 @@
 // @flow
 
-const globalConfig = require('../config');
 
 /**
  * Entity creation checklist:
@@ -11,6 +10,7 @@ const globalConfig = require('../config');
 
 
 const Entities = {
+  BACKGROUND: require('./background.js'),
   DIRT: require('./dirt.js'),
 
   CELL: require('./cell.js'),
@@ -22,6 +22,8 @@ const Entities = {
 
 const Properties = {
   isPlayerControlled: 'IS_PLAYER_CONTROLLED',
+  isActor: 'IS_ACTOR',
+  isAgent: 'IS_AGENT',
 };
 
 module.exports = {

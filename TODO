@@ -1,28 +1,59 @@
 
-- npm setup
-- rendering
-  - animations
-    - should work with their own tick
-    - entities need action queue
-    - action queueing stuff from Bees
-- basic UI
-  - button for ending turn
-- mouse stuff
-- turn reducers
-  - allowing players to control their entities on their turn
-  - how to control entities (one action per turn, energy, etc)
 - hex grid
-  - getters for neighboring positions (from selectors)
+  - need to support non-hex-grid in neighbor/inFront selectors
+- get it up and running
+  - need to tie action animations/execution to turn cycling
+  - entities doing one action per turn?
+
 
 - level editor
-  - add level editor functions to bee/cell
+  - EDITOR screen + picker on main menu
+  - add level editor functions to bee/cell/background
   - how to turn editor function on entity into an entity that
     gets made with the selected properties
     - callback for args array that stays up to date?
+- level loading
+  - level loading functions from Tower Defense
+  - not as much nonsense with SET_PLAYERS_AND_SIZE
+
+- turn reducers (need in bee game idea?)
+  - allowing players to control their entities on their turn
+  - how to control entities (one action per turn, energy, etc)
+
+
+- split out before going too hard on bees game
 
 - AI
   - position evaluation + shallow/greedy exploration
 
 - possible games
-  - bees vs wasps
+  - bee "card" game
+    - when bees are born they are assigned a task permanently
+    - tasks:
+      - get honey
+      - feed larva
+      - build cells
+      - scout for food
+      - clean cells
+      - fan heat
+      - nectar -> honey?
+    - events:
+      - queen lays eggs
+      - egg -> larva -> pupa -> worker
+      - cell gets built
+      - cell gets dirty
+      - cell/larva gets hot
+      - wasp attacks
+    - choices player makes:
+      - worker bee tasks
+      - where to build cells?
+
+  - bees vs wasps hive-like
   - generals, armies, spies
+
+
+./daemons/spriteSheetSystem.js:  // TODO: don't load sprites if they're already loaded
+./board.js:  // TODO: if hexagonal, may need to add an additional space to each even row
+./simulation/actionOperations.js:  // TODO: move should check for inGrid entities
+./simulation/actionOperations.js:  // TODO: implement canDoMove
+./state.js:// TODO: do I even need this?

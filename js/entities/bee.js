@@ -1,10 +1,9 @@
 // @flow
 
 const {subtract} = require('bens_utils').vectors;
-const {getPositionInFront} = require('../selectors');
-const {
-  millisPerBeat,
-} = require('../config');
+const {getPositionInFront} = require('../selectors/misc');
+
+const millis = 20;
 
 const config = {
   type: 'BEE',
@@ -17,54 +16,54 @@ const config = {
   isAgent: true,
   // action params
   MOVE: {
-    duration: 4 * millisPerBeat(),
+    duration: 4 * millis,
     spriteOrder: [],
   },
   TURN: {
-    duration: 1 * millisPerBeat(),
+    duration: 1 * millis,
     spriteOrder: [],
   },
   MOVE_TURN: {
-    duration: 4 * millisPerBeat(),
+    duration: 4 * millis,
     spriteOrder: [],
   },
   PICKUP: {
-    duration: 1 * millisPerBeat(),
+    duration: 1 * millis,
     spriteOrder: [],
   },
   PUTDOWN: {
-    duration: 1 * millisPerBeat(),
+    duration: 1 * millis,
     spriteOrder: [],
   },
   LAY_EGG: {
-    duration: 4 * millisPerBeat(),
-    effectIndex: 2 * millisPerBeat(),
+    duration: 4 * millis,
+    effectIndex: 2 * millis,
     spriteOrder: [],
   },
   MAKE_BLUEPRINT: {
-    duration: 4 * millisPerBeat(),
-    effectIndex: 2 * millisPerBeat(),
+    duration: 4 * millis,
+    effectIndex: 2 * millis,
     spriteOrder: [],
   },
   WAIT: {
-    duration: 1 * millisPerBeat(),
+    duration: 1 * millis,
     spriteOrder: [],
   },
   BUILD: {
-    duration: 4 * millisPerBeat(),
-    effectIndex: 3 * millisPerBeat(),
+    duration: 4 * millis,
+    effectIndex: 3 * millis,
   },
   COLLECT_FOOD: {
-    duration: 16 * millisPerBeat(),
-    effectIndex: 15 * millisPerBeat(),
+    duration: 16 * millis,
+    effectIndex: 15 * millis,
   },
   SCOUT: {
-    duration: 16 * millisPerBeat(),
-    effectIndex: 15 * millisPerBeat(),
+    duration: 16 * millis,
+    effectIndex: 15 * millis,
   },
   ASSIGN_TASKS_IN_RADIUS: {
-    duration: 4 * millisPerBeat(),
-    effectIndex: 3 * millisPerBeat(),
+    duration: 4 * millis,
+    effectIndex: 3 * millis,
   }
 };
 
@@ -76,18 +75,18 @@ export type Task =
   {type: 'RETRIEVE_FOOD', foodPos: Vector, cellPos: Vector};
 
 const make = (
-  position: Vector,
+  position: Vector, playerID,
 ): Bee => {
   return {
     ...config,
     prevPosition: position,
+    playerID,
     position,
     theta: 0,
     id: -1, // NOTE: this should be set by the reducer
     actions: [],
     holding: null,
     task: {type: 'STANDBY'},
-    dance: null,
   };
 }
 
@@ -150,7 +149,8 @@ const render = (ctx, game: Game, bee: Bee) => {
 
 
   // space in front
-  if (game.controlledEntity && game.controlledEntity.id == bee.id) {
+  // if (game.controlledEntity && game.controlledEntity.id == bee.id) {
+  if (true) {
     ctx.save();
 
     const pos = getPositionInFront(game, bee);
