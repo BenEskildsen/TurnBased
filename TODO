@@ -1,5 +1,6 @@
 
 - hex grid
+  - rendering won't work with movement unless interpolated position does it
   - need to support non-hex-grid in neighbor/inFront selectors
 - get it up and running
   - need to tie action animations/execution to turn cycling

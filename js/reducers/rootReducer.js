@@ -26,7 +26,7 @@ const rootReducer = (state: State, action: Action): State => {
           [initPlayer(0, 'HUMAN', 'You'), initPlayer(1, 'COMPUTER', 'Enemy')],
           20, 20,
         ),
-        screen: 'GAME',
+        screen: action.screen ? action.screen : 'GAME',
       }
       render(nextState.game);
       return nextState;

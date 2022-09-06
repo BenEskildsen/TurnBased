@@ -22,7 +22,9 @@ function Game(props): React.Node {
     <div>
       <MenuCard {...props} />
       <Canvas
-        useFullScreen={true}
+        useFullScreen={state.screen == 'GAME'}
+        width={state.screen == 'EDITOR' ? window.innerWidth - 500 : null}
+        height={state.screen == 'EDITOR' ? window.innerHeight : null}
       />
     </div>
   );

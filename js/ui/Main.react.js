@@ -1,9 +1,11 @@
 // @flow
 
 const React = require('react');
-const {Button, Modal} = require('bens_ui_components');
+const {Button, Checkbox, Dropdown, Modal} = require('bens_ui_components');
 const {loadLevel} = require('../levels');
 const Game = require('./Game.react');
+const Editor = require('./Editor.react');
+const {useState, useMemo, useEffect} = React;
 
 type Props = {
   state: State,
@@ -49,10 +51,11 @@ function Lobby(props): React.Node {
         onClick={() => {
           props.dispatch({
             type: 'SET_MODAL',
-            modal: (<PlayModal store={store} dispatch={props.dispatch} />),
+            modal: (<PlayModal store={props.store} dispatch={props.dispatch} />),
           });
         }}
       />
+      <LevelEditor dispatch={props.dispatch} />
     </div>
   );
 }
@@ -74,6 +77,70 @@ function PlayModal(props): React.Node {
         }
       ]}
     />
+  );
+}
+
+
+function LevelEditor(props) {
+  const {dispatch} = props;
+  const [level, setLevel] = useState('testLevel');
+  const [useLevel, setUseLevel] = useState(true);
+  const [rerender, setRerender] = useState(0);
+
+  const onresize = () => setRerender(rerender + 1);
+
+  let left = 5;
+  let top = window.innerHeight - 82;
+  useEffect(() => {
+    window.addEventListener('resize', onresize);
+    left = 5;
+    top = window.innerHeight - 82;
+    return (() => {
+      window.removeEventListener('resize', onresize);
+    });
+  }, [rerender]);
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        width: 310,
+        left,
+        top,
+        backgroundColor: 'rgb(250, 248, 239)',
+        borderRadius: 8,
+        padding: 4,
+        border: '1px solid black',
+      }}
+    >
+      Select Level:
+      <Dropdown
+        options={['testLevel']}
+        selected={level}
+        onChange={setLevel}
+      />
+      <div>
+        <Checkbox
+          label="Use Selected Level"
+          checked={useLevel}
+          onChange={setUseLevel}
+        />
+      </div>
+      <div>
+        <Button
+          label="Level Editor"
+          style={{
+            width: '100%',
+          }}
+          onClick={() => {
+            dispatch({type: 'START', screen: 'EDITOR'});
+            if (useLevel) {
+              loadLevel(store, level);
+            }
+          }}
+        />
+      </div>
+    </div>
   );
 }
 
