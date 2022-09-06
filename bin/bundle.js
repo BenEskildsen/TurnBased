@@ -1691,7 +1691,7 @@ var initGame = function initGame(players, width, height) {
 
     nextID: 1,
     entities: {},
-    board: initBoard(width, height, false /* is hexagonal */),
+    board: initBoard(width, height, true /* is hexagonal */),
 
     mouse: {
       isLeftDown: false,

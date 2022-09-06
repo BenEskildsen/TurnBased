@@ -19,6 +19,8 @@ function Main(props: Props): React.Node {
     content = <Lobby {...props} />
   } else if (state.screen === 'GAME') {
     content = <Game {...props} />
+  } else if (state.screen === 'EDITOR') {
+    content = <Editor {...props} />
   }
 
   return (
